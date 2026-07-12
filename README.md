@@ -10,16 +10,14 @@ newsletter, refreshed on a schedule so the output reflects current activity.
 | Deliverable | Where |
 |---|---|
 | Demo app link | *fill in after deploying — see [Deployment](#deployment)* |
-| GitHub repo link | *fill in after `git init` + push — see [Deployment](#deployment)* |
+| GitHub repo link | https://github.com/Ddeepakshi/fmcg-newsletter-agent |
 | Raw data (CSV / JSON) | `data/output/deals.csv`, `data/output/deals.json` |
 | Newsletter (Word / Excel / PowerPoint) | `data/output/newsletter.docx`, `data/output/deals.xlsx` (includes a **Newsletter** sheet, not just the raw table), `data/output/newsletter.pptx` |
 | Architecture diagram | [below](#architecture) (Mermaid — renders natively on GitHub) |
 | Pipeline explanation (de-dup + relevance logic) | [Pipeline & agent logic](#pipeline--agent-logic) |
 
-The two links are intentionally blank: this session built and locally
-verified the full pipeline + dashboard but did not push to GitHub or deploy,
-per an earlier explicit choice to keep this session's changes local-only.
-See [Deployment](#deployment) for the exact steps to produce both links.
+The demo app link is still blank — the code is pushed, but the app isn't
+deployed yet. See [Deployment](#deployment) for the remaining step.
 
 ## Architecture
 
@@ -247,12 +245,8 @@ newsletter entry links back to its original source.
 
 ## Deployment
 
-This session built and locally verified the full pipeline + dashboard but
-deliberately did not push to GitHub or deploy — that needs your accounts:
-
-1. `git init && git add . && git commit -m "Initial commit"`
-2. Push to a new GitHub repo → that URL is the **GitHub link** deliverable.
-3. Add `GROQ_API_KEY` as a repository secret (enables `.github/workflows/refresh.yml`).
-4. Deploy `app.py` on Streamlit Community Cloud (or Vercel, per the brief),
-   adding `GROQ_API_KEY` under the app's secrets manager → that URL is the
-   **demo app link** deliverable.
+- [x] Pushed to GitHub: https://github.com/Ddeepakshi/fmcg-newsletter-agent
+- [ ] Add `GROQ_API_KEY` as a repository secret (enables `.github/workflows/refresh.yml`).
+- [ ] Deploy `app.py` on Streamlit Community Cloud (or Vercel, per the brief),
+      adding `GROQ_API_KEY` under the app's secrets manager → that URL is the
+      **demo app link** deliverable.
