@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.streamlit/secrets.toml
+
+# Claude Code session/harness state — not project source.
+.claude/
+
+# Per-run diagnostic logs are regenerated every run — not worth versioning.
+data/logs/*.json
+
+# Generated deliverables are regenerable from data/cache/last_known_good.json
+# via src.output_writers — not versioned to avoid noisy binary diffs.
+data/output/*
+!data/output/.gitkeep
+
+# data/cache/last_known_good.json IS versioned on purpose: it's the seed
+# dataset the demo falls back to when a live run isn't possible (spec §10).
