@@ -54,6 +54,15 @@ def test_docx_output_is_valid_and_contains_heading(tmp_path):
     assert "ITC to acquire Prasuma Foods" in text
 
 
+def test_docx_output_has_a_real_clickable_hyperlink(tmp_path):
+    # Guardrail against regressing to plain "text (url)" — sources should be
+    # actual clickable hyperlinks, not flattened text.
+    paths = write_all_outputs(SAMPLE_RECORDS, SAMPLE_NEWSLETTER, tmp_path)
+    doc = Document(paths["docx"])
+    hyperlink_targets = [rel.target_ref for rel in doc.part.rels.values() if "hyperlink" in rel.reltype]
+    assert "https://a.com/1" in hyperlink_targets
+
+
 def test_xlsx_output_is_valid(tmp_path):
     paths = write_all_outputs(SAMPLE_RECORDS, SAMPLE_NEWSLETTER, tmp_path)
     wb = load_workbook(paths["xlsx"])
@@ -75,6 +84,30 @@ def test_xlsx_output_includes_newsletter_sheet(tmp_path):
 
 
 def test_pptx_output_is_valid(tmp_path):
+    # Title slide + one slide per deal + a closing summary slide.
     paths = write_all_outputs(SAMPLE_RECORDS, SAMPLE_NEWSLETTER, tmp_path)
     prs = Presentation(paths["pptx"])
-    assert len(prs.slides) == 2
+    assert len(prs.slides) == len(SAMPLE_RECORDS) + 2
+
+
+def test_pptx_deal_slide_has_structured_content_and_hyperlink(tmp_path):
+    paths = write_all_outputs(SAMPLE_RECORDS, SAMPLE_NEWSLETTER, tmp_path)
+    prs = Presentation(paths["pptx"])
+    deal_slide = prs.slides[1]
+    all_text = "\n".join(sh.text_frame.text for sh in deal_slide.shapes if sh.has_text_frame)
+    assert "ITC to acquire Prasuma Foods" in all_text
+    assert "ITC" in all_text and "Prasuma Foods" in all_text
+    assert "Economic Times" in all_text
+
+    hyperlink_runs = [
+        run for sh in deal_slide.shapes if sh.has_text_frame
+        for p in sh.text_frame.paragraphs for run in p.runs
+        if run.hyperlink.address
+    ]
+    assert any(run.hyperlink.address == "https://a.com/1" for run in hyperlink_runs)
+
+
+def test_pptx_handles_no_qualifying_deals(tmp_path):
+    paths = write_all_outputs([], "# FMCG Deal Intelligence Newsletter\n\nNo qualifying deals found.", tmp_path)
+    prs = Presentation(paths["pptx"])
+    assert len(prs.slides) == 3  # title + "no deals" notice + summary
