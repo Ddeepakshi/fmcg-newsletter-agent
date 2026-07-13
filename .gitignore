@@ -11,9 +11,17 @@ __pycache__/
 data/logs/*.json
 
 # Generated deliverables are regenerable from data/cache/last_known_good.json
-# via src.output_writers — not versioned to avoid noisy binary diffs.
+# via src.output_writers. A sample snapshot of the 5 named deliverables IS
+# versioned on purpose (assignment brief asks for downloadable Word/Excel/
+# PPT/CSV/JSON in the repo) — anything else written to data/output/ (e.g. a
+# stray file from manual testing) stays ignored.
 data/output/*
 !data/output/.gitkeep
+!data/output/deals.csv
+!data/output/deals.json
+!data/output/deals.xlsx
+!data/output/newsletter.docx
+!data/output/newsletter.pptx
 
 # data/cache/last_known_good.json IS versioned on purpose: it's the seed
 # dataset the demo falls back to when a live run isn't possible (spec §10).
