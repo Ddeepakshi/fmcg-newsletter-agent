@@ -1,8 +1,17 @@
 """Streamlit dashboard for the FMCG Deal Intelligence Agent (spec section 4/10)."""
 import logging
+import os
 
 import pandas as pd
 import streamlit as st
+
+# Streamlit Community Cloud secrets (set via the app's dashboard) arrive as
+# st.secrets, not as OS environment variables — config.py reads GROQ_API_KEY
+# et al. via os.getenv, so bridge them into the environment before config is
+# imported. Harmless locally too: python-dotenv's .env already populates
+# os.environ, so this is a no-op there.
+for _key, _value in st.secrets.items():
+    os.environ.setdefault(_key, str(_value))
 
 import config
 from src.pipeline import load_last_known_good, run_pipeline_safe
@@ -76,9 +85,9 @@ col1, col2, col3, col4, col5, col6 = st.columns(6)
 col1.metric("Raw fetched", summary.get("raw_count", 0))
 col2.metric("After cleaning", summary.get("cleaned_count", 0))
 col3.metric("After dedup", summary.get("after_dedup_count", 0))
-col4.metric("Relevant", summary.get("relevant_count", 0))
-col5.metric("Recent", summary.get("recent_count", 0))
-col6.metric("Final (credible)", summary.get("final_count", 0))
+col4.metric("Recent", summary.get("recent_count", 0))
+col5.metric("Credible", summary.get("credible_count", 0))
+col6.metric("Relevant (final)", summary.get("relevant_count", 0))
 
 st.caption(
     f"Run started: {summary.get('run_started_at', 'n/a')} · "
